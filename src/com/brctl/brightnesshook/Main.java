@@ -7,12 +7,17 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class Main implements IXposedHookLoadPackage {
 
     private static final String TAG = "BrightnessHook";
     private static Method sysPropGet = null;
     private static int luxLogCount = 0;
+
+    // 光感历史记录（用于平滑 + 延迟）
+    private static final ArrayList<Long> sLuxTimes = new ArrayList<Long>();
+    private static final ArrayList<Float> sLuxValues = new ArrayList<Float>();
 
     private static String getProp(String key, String def) {
         try {
@@ -35,6 +40,50 @@ public class Main implements IXposedHookLoadPackage {
         }
     }
 
+    /**
+     * 对光感读数做平滑（时间窗内平均）+ 延迟输出。
+     *
+     * @param now 当前事件时间戳（uptimeMillis）
+     * @param lux 当前（已乘 lux_inc 的）光感值
+     * @return 平滑后、延迟 smoothDelay 毫秒的值
+     */
+    private static synchronized float smoothAndDelay(long now, float lux) {
+        float delayMs = getPropFloat("persist.brctl.smooth_delay", 2000f);
+        float windowMs = getPropFloat("persist.brctl.smooth_window", 1000f);
+        if (delayMs <= 0f || windowMs <= 0f) {
+            return lux;
+        }
+        long delay = (long) delayMs;
+        long window = (long) windowMs;
+
+        sLuxTimes.add(Long.valueOf(now));
+        sLuxValues.add(Float.valueOf(lux));
+
+        // 清理太旧的数据
+        long cutoff = now - delay - window;
+        while (!sLuxTimes.isEmpty() && sLuxTimes.get(0).longValue() < cutoff) {
+            sLuxTimes.remove(0);
+            sLuxValues.remove(0);
+        }
+
+        // 取 [now - delay - window, now - delay] 窗口内的平均值
+        long start = now - delay - window;
+        long end = now - delay;
+        float sum = 0f;
+        int count = 0;
+        for (int i = 0; i < sLuxTimes.size(); i++) {
+            long t = sLuxTimes.get(i).longValue();
+            if (t >= start && t <= end) {
+                sum += sLuxValues.get(i).floatValue();
+                count++;
+            }
+        }
+        if (count == 0) {
+            return lux; // 历史数据不足，直接返回当前值
+        }
+        return sum / count;
+    }
+
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) {
         if (!"android".equals(lpparam.packageName)) {
@@ -45,30 +94,31 @@ public class Main implements IXposedHookLoadPackage {
             final ClassLoader cl = lpparam.classLoader;
             final String cls = "com.android.server.display.AutomaticBrightnessController";
 
-            // ===== Hook 1：拦截光感 lux 输入（改曲线的"输入"） =====
+            // ===== Hook 1：拦截光感 lux 输入（倍率 + 平滑 + 延迟） =====
             XposedHelpers.findAndHookMethod(cls, cl, "handleLightSensorEvent",
                     long.class, float.class, new XC_MethodHook() {
                         @Override
                         public void beforeHookedMethod(MethodHookParam param) {
-                            float luxInc = getPropFloat("persist.brctl.lux_inc", 1.0f);
-                            if (luxInc == 1.0f) {
+                            Object[] args = param.args;
+                            if (args.length < 2 || !(args[1] instanceof Float)) {
                                 return;
                             }
-                            Object[] args = param.args;
-                            if (args.length >= 2 && args[1] instanceof Float) {
-                                float lux = ((Float) args[1]).floatValue();
-                                float newLux = lux * luxInc;
-                                if (luxLogCount < 50) {
-                                    luxLogCount++;
-                                    XposedBridge.log(TAG + ": lux " + lux + " -> " + newLux + " (inc=" + luxInc + ")");
-                                }
-                                args[1] = Float.valueOf(newLux);
+                            long now = ((Long) args[0]).longValue();
+                            float lux = ((Float) args[1]).floatValue();
+                            float luxInc = getPropFloat("persist.brctl.lux_inc", 1.0f);
+                            float newLux = lux * luxInc;
+                            newLux = smoothAndDelay(now, newLux);
+                            if (luxLogCount < 50) {
+                                luxLogCount++;
+                                XposedBridge.log(TAG + ": lux " + lux + " -> " + newLux
+                                        + " (inc=" + luxInc + ")");
                             }
+                            args[1] = Float.valueOf(newLux);
                         }
                     });
             XposedBridge.log(TAG + ": hooked handleLightSensorEvent (lux input) OK");
 
-            // ===== Hook 2：拦截亮度输出（改曲线的"输出"，分段倍率） =====
+            // ===== Hook 2：拦截亮度输出（分段倍率） =====
             final Class<?> brightnessEventClass = XposedHelpers.findClass(
                     "com.android.server.display.brightness.BrightnessEvent", cl);
             XposedHelpers.findAndHookMethod(cls, cl, "getAutomaticScreenBrightness",
@@ -106,7 +156,7 @@ public class Main implements IXposedHookLoadPackage {
                     });
             XposedBridge.log(TAG + ": hooked getAutomaticScreenBrightness (output) OK");
 
-            // ===== Hook 3：修改防抖时间（解决不灵敏 + 明暗跳跃） =====
+            // ===== Hook 3：修改防抖时间 =====
             final Class<?> abcClass = XposedHelpers.findClass(cls, cl);
             XposedBridge.hookAllConstructors(abcClass, new XC_MethodHook() {
                 @Override
