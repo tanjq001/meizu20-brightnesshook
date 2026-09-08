@@ -12,6 +12,7 @@ public class Main implements IXposedHookLoadPackage {
 
     private static final String TAG = "BrightnessHook";
     private static Method sysPropGet = null;
+    private static int luxLogCount = 0;
 
     private static String getProp(String key, String def) {
         try {
@@ -56,7 +57,12 @@ public class Main implements IXposedHookLoadPackage {
                             Object[] args = param.args;
                             if (args.length >= 2 && args[1] instanceof Float) {
                                 float lux = ((Float) args[1]).floatValue();
-                                args[1] = Float.valueOf(lux * luxInc);
+                                float newLux = lux * luxInc;
+                                if (luxLogCount < 50) {
+                                    luxLogCount++;
+                                    XposedBridge.log(TAG + ": lux " + lux + " -> " + newLux + " (inc=" + luxInc + ")");
+                                }
+                                args[1] = Float.valueOf(newLux);
                             }
                         }
                     });
@@ -99,6 +105,25 @@ public class Main implements IXposedHookLoadPackage {
                         }
                     });
             XposedBridge.log(TAG + ": hooked getAutomaticScreenBrightness (output) OK");
+
+            // ===== Hook 3：修改防抖时间（解决不灵敏 + 明暗跳跃） =====
+            final Class<?> abcClass = XposedHelpers.findClass(cls, cl);
+            XposedBridge.hookAllConstructors(abcClass, new XC_MethodHook() {
+                @Override
+                public void afterHookedMethod(MethodHookParam param) {
+                    try {
+                        long brighten = (long) getPropFloat("persist.brctl.brighten_debounce", 1000f);
+                        long darken = (long) getPropFloat("persist.brctl.darken_debounce", 4000f);
+                        XposedHelpers.setLongField(param.thisObject, "mBrighteningLightDebounceConfig", brighten);
+                        XposedHelpers.setLongField(param.thisObject, "mDarkeningLightDebounceConfig", darken);
+                        XposedBridge.log(TAG + ": debounce set brighten=" + brighten + " darken=" + darken);
+                    } catch (Throwable t) {
+                        XposedBridge.log(TAG + ": set debounce failed");
+                        XposedBridge.log(t);
+                    }
+                }
+            });
+            XposedBridge.log(TAG + ": hooked constructors (debounce) OK");
         } catch (Throwable t) {
             XposedBridge.log(TAG + ": hook failed");
             XposedBridge.log(t);
