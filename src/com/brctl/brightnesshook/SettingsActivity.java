@@ -155,7 +155,8 @@ public class SettingsActivity extends Activity {
         sb.append("机型：魅族 20\n");
         sb.append("在 Flyme 10.5.0.0.0 上开发\n");
         sb.append("其它版本系统未验证\n\n");
-        sb.append("作者：酷安 折翼之舞007\n\n");
+        sb.append("作者：酷安 折翼之舞007\n");
+        sb.append("源码：https://github.com/tanjq001/meizu20-brightnesshook\n\n");
         sb.append("──────────────\n");
         sb.append("【调节指南】\n\n");
         sb.append("屏幕过暗\n");
