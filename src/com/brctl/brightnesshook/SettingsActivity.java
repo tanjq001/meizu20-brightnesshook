@@ -18,17 +18,17 @@ public class SettingsActivity extends Activity {
 
     // 参数定义：{属性名, 显示标签}
     private static final String[][] PARAMS = {
-        {"lux_inc", "光感倍率（>1更亮，1=不变）"},
-        {"smooth_delay", "光感延迟（亮度跳跃设2000~5000，0=关闭）"},
-        {"smooth_window", "滤波窗口（毫秒）"},
-        {"filter_mode", "滤波方式（median / mean）"},
-        {"low_max", "低亮度档上限（%）"},
-        {"mid_max", "中亮度档上限（%）"},
-        {"low_inc", "低亮度倍率"},
-        {"mid_inc", "中亮度倍率"},
-        {"hig_inc", "高亮度倍率"},
-        {"brighten_debounce", "变亮防抖（毫秒）"},
-        {"darken_debounce", "变暗防抖（毫秒）"},
+        {"lux_inc", "光感倍率 (lux_inc)｜>1更亮，1=不变"},
+        {"smooth_delay", "光感延迟 (smooth_delay)｜跳跃设2000~5000，0=关闭"},
+        {"smooth_window", "滤波窗口 (smooth_window)｜毫秒"},
+        {"filter_mode", "滤波方式 (filter_mode)｜median / mean"},
+        {"low_max", "低亮度档上限 (low_max)｜%"},
+        {"mid_max", "中亮度档上限 (mid_max)｜%"},
+        {"low_inc", "低亮度倍率 (low_inc)"},
+        {"mid_inc", "中亮度倍率 (mid_inc)"},
+        {"hig_inc", "高亮度倍率 (hig_inc)"},
+        {"brighten_debounce", "变亮防抖 (brighten_debounce)｜毫秒"},
+        {"darken_debounce", "变暗防抖 (darken_debounce)｜毫秒"},
     };
 
     // 默认值：{属性名, 默认值}
