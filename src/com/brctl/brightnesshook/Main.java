@@ -42,6 +42,16 @@ public class Main implements IXposedHookLoadPackage {
         }
     }
 
+    private static float clamp(float v, float min, float max) {
+        if (v < min) {
+            return min;
+        }
+        if (v > max) {
+            return max;
+        }
+        return v;
+    }
+
     private static void setProp(String key, String value) {
         try {
             if (sysPropSet == null) {
@@ -62,8 +72,8 @@ public class Main implements IXposedHookLoadPackage {
      * @return 滤波后、延迟 smoothDelay 毫秒的值
      */
     private static synchronized float smoothAndDelay(long now, float lux) {
-        float delayMs = getPropFloat("persist.brctl.smooth_delay", 2000f);
-        float windowMs = getPropFloat("persist.brctl.smooth_window", 1000f);
+        float delayMs = clamp(getPropFloat("persist.brctl.smooth_delay", 2000f), 0f, 60000f);
+        float windowMs = clamp(getPropFloat("persist.brctl.smooth_window", 1000f), 0f, 60000f);
         String mode = getProp("persist.brctl.filter_mode", "median");
         if (windowMs <= 0f) {
             return lux;
