@@ -124,6 +124,8 @@ public class SettingsActivity extends Activity {
                         + "光感拦截 · 中值滤波 · 分段倍率 · 防抖调节\n\n"
                         + "机型：魅族 20\n"
                         + "适用系统：Flyme 10.5.0.0.0\n\n"
+                        + "在 Flyme 10.5.0.0.0 上开发\n"
+                        + "其它版本系统未验证\n\n"
                         + "作者：酷安 折翼之舞007")
                 .setPositiveButton("确定", null)
                 .show();
