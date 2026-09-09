@@ -72,8 +72,8 @@ public class Main implements IXposedHookLoadPackage {
      * @return 滤波后、延迟 smoothDelay 毫秒的值
      */
     private static synchronized float smoothAndDelay(long now, float lux) {
-        float delayMs = clamp(getPropFloat("persist.brctl.smooth_delay", 2000f), 0f, 60000f);
-        float windowMs = clamp(getPropFloat("persist.brctl.smooth_window", 1000f), 0f, 60000f);
+        float delayMs = clamp(getPropFloat("persist.brctl.smooth_delay", 0f), 0f, 60000f);
+        float windowMs = clamp(getPropFloat("persist.brctl.smooth_window", 4000f), 0f, 60000f);
         String mode = getProp("persist.brctl.filter_mode", "median");
         if (windowMs <= 0f) {
             return lux;
@@ -164,7 +164,7 @@ public class Main implements IXposedHookLoadPackage {
                 public void afterHookedMethod(MethodHookParam param) {
                     try {
                         long brighten = (long) getPropFloat("persist.brctl.brighten_debounce", 1000f);
-                        long darken = (long) getPropFloat("persist.brctl.darken_debounce", 4000f);
+                        long darken = (long) getPropFloat("persist.brctl.darken_debounce", 2000f);
                         XposedHelpers.setLongField(param.thisObject, "mBrighteningLightDebounceConfig", brighten);
                         XposedHelpers.setLongField(param.thisObject, "mDarkeningLightDebounceConfig", darken);
                         XposedBridge.log(TAG + ": debounce set brighten=" + brighten + " darken=" + darken);
