@@ -227,7 +227,7 @@ public class SettingsActivity extends Activity {
         sb.append("光感倍率 (lux_inc)\n");
         sb.append("  光感读数倍率，>1 更亮，<1 更暗，1=不变，默认 1.3\n\n");
         sb.append("光感最小值 (lux_min)\n");
-        sb.append("  光感值低于此值时按此值算，0=不限制，默认 0\n\n");
+        sb.append("  ×倍率后的光感值低于此值时按此值算，0=不限制，默认 0\n\n");
         sb.append("滤波窗口 (smooth_window)\n");
         sb.append("  中值/均值滤波时间窗毫秒数，0=关闭，上限 60000，默认 4000\n\n");
         sb.append("滤波方式 (filter_mode)\n");

@@ -139,13 +139,12 @@ public class Main implements IXposedHookLoadPackage {
                             }
                             long now = ((Long) args[0]).longValue();
                             float rawLux = ((Float) args[1]).floatValue();
-                            float lux = rawLux;
-                            float luxMin = getPropFloat("persist.brctl.lux_min", 0f);
-                            if (lux < luxMin) {
-                                lux = luxMin; // 光感最小值：低于该值按该值算
-                            }
                             float luxInc = getPropFloat("persist.brctl.lux_inc", 1.3f);
-                            float newLux = lux * luxInc;
+                            float newLux = rawLux * luxInc;
+                            float luxMin = getPropFloat("persist.brctl.lux_min", 0f);
+                            if (newLux < luxMin) {
+                                newLux = luxMin; // 光感最小值：乘倍率后低于该值按该值算
+                            }
                             newLux = filterLux(now, newLux);
                             // 实时暴露光感值给界面
                             setProp("sys.brctl.raw_lux", String.valueOf(rawLux));
