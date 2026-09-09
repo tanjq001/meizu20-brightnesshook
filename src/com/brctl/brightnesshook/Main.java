@@ -65,35 +65,33 @@ public class Main implements IXposedHookLoadPackage {
     }
 
     /**
-     * 对光感读数做滤波（均值或中值）+ 延迟输出。
+     * 对光感读数做中值/均值滤波（时间窗内）。
      *
      * @param now 当前事件时间戳（uptimeMillis）
      * @param lux 当前（已乘 lux_inc 的）光感值
-     * @return 滤波后、延迟 smoothDelay 毫秒的值
+     * @return 滤波后的值
      */
-    private static synchronized float smoothAndDelay(long now, float lux) {
-        float delayMs = clamp(getPropFloat("persist.brctl.smooth_delay", 0f), 0f, 60000f);
+    private static synchronized float filterLux(long now, float lux) {
         float windowMs = clamp(getPropFloat("persist.brctl.smooth_window", 4000f), 0f, 60000f);
         String mode = getProp("persist.brctl.filter_mode", "median");
         if (windowMs <= 0f) {
             return lux;
         }
-        long delay = (long) delayMs;
         long window = (long) windowMs;
 
         sLuxTimes.add(Long.valueOf(now));
         sLuxValues.add(Float.valueOf(lux));
 
         // 清理太旧的数据
-        long cutoff = now - delay - window;
+        long cutoff = now - window;
         while (!sLuxTimes.isEmpty() && sLuxTimes.get(0).longValue() < cutoff) {
             sLuxTimes.remove(0);
             sLuxValues.remove(0);
         }
 
-        // 收集 [now - delay - window, now - delay] 窗口内的值
-        long start = now - delay - window;
-        long end = now - delay;
+        // 收集 [now - window, now] 窗口内的值
+        long start = now - window;
+        long end = now;
         ArrayList<Float> vals = new ArrayList<Float>();
         for (int i = 0; i < sLuxTimes.size(); i++) {
             long t = sLuxTimes.get(i).longValue();
@@ -140,16 +138,21 @@ public class Main implements IXposedHookLoadPackage {
                                 return;
                             }
                             long now = ((Long) args[0]).longValue();
-                            float lux = ((Float) args[1]).floatValue();
+                            float rawLux = ((Float) args[1]).floatValue();
+                            float lux = rawLux;
+                            float luxMin = getPropFloat("persist.brctl.lux_min", 0f);
+                            if (lux < luxMin) {
+                                lux = luxMin; // 光感最小值：低于该值按该值算
+                            }
                             float luxInc = getPropFloat("persist.brctl.lux_inc", 1.3f);
                             float newLux = lux * luxInc;
-                            newLux = smoothAndDelay(now, newLux);
+                            newLux = filterLux(now, newLux);
                             // 实时暴露光感值给界面
-                            setProp("sys.brctl.raw_lux", String.valueOf(lux));
+                            setProp("sys.brctl.raw_lux", String.valueOf(rawLux));
                             setProp("sys.brctl.cur_lux", String.valueOf(newLux));
                             if (luxLogCount < 50) {
                                 luxLogCount++;
-                                XposedBridge.log(TAG + ": lux " + lux + " -> " + newLux
+                                XposedBridge.log(TAG + ": lux " + rawLux + " -> " + newLux
                                         + " (inc=" + luxInc + ")");
                             }
                             args[1] = Float.valueOf(newLux);

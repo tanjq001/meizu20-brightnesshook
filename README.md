@@ -38,7 +38,7 @@ hook 目标类：`com.android.server.display.AutomaticBrightnessController`（sy
 
 - **倍率**：`lux × lux_inc`
 - **滤波**：在 `smooth_window` 时间窗内取中值（或均值，见 `filter_mode`）
-- **延迟**：输出 `smooth_delay` 毫秒之前的滤波值
+- **最小值**：光感低于 `lux_min` 时按 `lux_min` 算
 
 ### Hook 2：亮度输出拦截
 
@@ -65,7 +65,7 @@ hook 所有构造函数，反射修改：
 | 属性 | 默认值 | 说明 |
 |------|--------|------|
 | `persist.brctl.lux_inc` | 1.3 | 光感倍率，>1 更亮，<1 更暗 |
-| `persist.brctl.smooth_delay` | 0 | 光感延迟输出（毫秒），0 关闭 |
+| `persist.brctl.lux_min` | 0 | 光感最小值，低于按此值算（lux） |
 | `persist.brctl.smooth_window` | 4000 | 滤波时间窗（毫秒） |
 | `persist.brctl.filter_mode` | median | 滤波方式：median 中值 / mean 均值 |
 | `persist.brctl.low_max` | 30 | 低亮度档上限（百分比 0~100） |
@@ -85,8 +85,8 @@ su -c 'getprop | grep persist.brctl'
 # 整体调亮（系统以为环境更亮）
 su -c 'setprop persist.brctl.lux_inc 1.5'
 
-# 中值滤波 + 延迟 2 秒输出（抑制明暗跳跃）
-su -c 'setprop persist.brctl.smooth_delay 2000'
+# 中值滤波（抑制明暗跳跃）
+su -c 'setprop persist.brctl.lux_min 10'
 su -c 'setprop persist.brctl.smooth_window 1000'
 
 # 提高响应速度（缩短防抖）

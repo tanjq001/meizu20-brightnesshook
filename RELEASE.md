@@ -34,7 +34,7 @@
 su -c 'setprop persist.brctl.lux_inc 1.5'
 
 # 中值滤波 + 延迟 2 秒输出（抑制明暗跳跃）
-su -c 'setprop persist.brctl.smooth_delay 2000'
+su -c 'setprop persist.brctl.lux_min 10'
 
 # 加快响应（缩短防抖）
 su -c 'setprop persist.brctl.darken_debounce 1500'
@@ -45,7 +45,7 @@ su -c 'setprop persist.brctl.darken_debounce 1500'
 | 参数 | 默认 | 说明 |
 |---|---|---|
 | `lux_inc` | 1.3 | 光感倍率，>1 更亮 |
-| `smooth_delay` | 0 | 光感延迟输出（毫秒） |
+| `lux_min` | 0 | 光感最小值（lux） |
 | `smooth_window` | 4000 | 滤波时间窗（毫秒） |
 | `filter_mode` | median | 滤波方式：median 中值 / mean 均值 |
 | `low_inc` / `mid_inc` / `hig_inc` | 1.0 | 低/中/高亮度倍率 |

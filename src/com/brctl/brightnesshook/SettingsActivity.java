@@ -23,7 +23,7 @@ public class SettingsActivity extends Activity {
     // 参数定义：{属性名, 显示标签}
     private static final String[][] PARAMS = {
         {"lux_inc", "光感倍率 (lux_inc)｜>1更亮，1=不变"},
-        {"smooth_delay", "光感延迟 (smooth_delay)｜毫秒"},
+        {"lux_min", "光感最小值 (lux_min)｜lux，低于按此值算"},
         {"smooth_window", "滤波窗口 (smooth_window)｜毫秒"},
         {"filter_mode", "滤波方式 (filter_mode)｜median / mean"},
         {"brighten_debounce", "变亮防抖 (brighten_debounce)｜毫秒"},
@@ -33,7 +33,7 @@ public class SettingsActivity extends Activity {
     // 默认值：{属性名, 默认值}
     private static final String[][] DEFAULTS = {
         {"lux_inc", "1.3"},
-        {"smooth_delay", "0"},
+        {"lux_min", "0"},
         {"smooth_window", "4000"},
         {"filter_mode", "median"},
         {"brighten_debounce", "1000"},
@@ -215,19 +215,19 @@ public class SettingsActivity extends Activity {
         sb.append("──────────────\n");
         sb.append("【调节指南】\n\n");
         sb.append("屏幕过暗\n");
-        sb.append("  增大 lux_inc（如 1.3→1.8）\n\n");
+        sb.append("  增大 lux_inc 或 lux_min\n\n");
         sb.append("屏幕过亮\n");
-        sb.append("  减小 lux_inc（如 1.3→1.0）\n\n");
+        sb.append("  减小 lux_inc\n\n");
         sb.append("响应慢、不灵敏\n");
         sb.append("  减小 brighten_debounce / darken_debounce\n\n");
         sb.append("明暗跳跃、忽明忽暗\n");
-        sb.append("  增大 smooth_delay，滤波方式用 median\n\n");
+        sb.append("  增大 smooth_window，滤波方式用 median\n\n");
         sb.append("──────────────\n");
         sb.append("【参数说明】\n\n");
         sb.append("光感倍率 (lux_inc)\n");
         sb.append("  光感读数倍率，>1 更亮，<1 更暗，1=不变，默认 1.3\n\n");
-        sb.append("光感延迟 (smooth_delay)\n");
-        sb.append("  光感延迟输出毫秒数。建议设 1000~5000，0=不延迟，上限 60000，默认 0\n\n");
+        sb.append("光感最小值 (lux_min)\n");
+        sb.append("  光感值低于此值时按此值算，0=不限制，默认 0\n\n");
         sb.append("滤波窗口 (smooth_window)\n");
         sb.append("  中值/均值滤波时间窗毫秒数，0=关闭，上限 60000，默认 4000\n\n");
         sb.append("滤波方式 (filter_mode)\n");
