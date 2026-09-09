@@ -148,15 +148,41 @@ public class SettingsActivity extends Activity {
     }
 
     private void showAbout() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("亮度曲线调节 v1.1\n\n");
+        sb.append("基于 LSPosed 的自动亮度调节模块\n");
+        sb.append("光感拦截 · 中值滤波 · 分段倍率 · 防抖调节\n\n");
+        sb.append("机型：魅族 20\n");
+        sb.append("在 Flyme 10.5.0.0.0 上开发\n");
+        sb.append("其它版本系统未验证\n\n");
+        sb.append("作者：酷安 折翼之舞007\n\n");
+        sb.append("──────────────\n");
+        sb.append("【参数说明】\n\n");
+        sb.append("光感倍率 (lux_inc)\n");
+        sb.append("  光感读数倍率，>1 更亮，<1 更暗，1=不变，默认 1.3\n\n");
+        sb.append("光感延迟 (smooth_delay)\n");
+        sb.append("  光感延迟输出毫秒数，0=关闭，默认 2000\n\n");
+        sb.append("滤波窗口 (smooth_window)\n");
+        sb.append("  中值/均值滤波时间窗毫秒数，默认 1000\n\n");
+        sb.append("滤波方式 (filter_mode)\n");
+        sb.append("  median=中值(抗脉冲噪声) / mean=均值，默认 median\n\n");
+        sb.append("低亮度上限 (low_max)\n");
+        sb.append("  低亮度档上限百分比，默认 30\n\n");
+        sb.append("中亮度上限 (mid_max)\n");
+        sb.append("  中亮度档上限百分比，默认 60\n\n");
+        sb.append("低亮度倍率 (low_inc)\n");
+        sb.append("  低亮度输出倍率，默认 1.0\n\n");
+        sb.append("中亮度倍率 (mid_inc)\n");
+        sb.append("  中亮度输出倍率，默认 1.0\n\n");
+        sb.append("高亮度倍率 (hig_inc)\n");
+        sb.append("  高亮度输出倍率，默认 1.0\n\n");
+        sb.append("变亮防抖 (brighten_debounce)\n");
+        sb.append("  变亮防抖毫秒数，默认 1000\n\n");
+        sb.append("变暗防抖 (darken_debounce)\n");
+        sb.append("  变暗防抖毫秒数，默认 4000");
         new AlertDialog.Builder(this)
                 .setTitle("关于")
-                .setMessage("亮度曲线调节 v1.1\n\n"
-                        + "基于 LSPosed 的自动亮度调节模块\n"
-                        + "光感拦截 · 中值滤波 · 分段倍率 · 防抖调节\n\n"
-                        + "机型：魅族 20\n\n"
-                        + "在 Flyme 10.5.0.0.0 上开发\n"
-                        + "其它版本系统未验证\n\n"
-                        + "作者：酷安 折翼之舞007")
+                .setMessage(sb.toString())
                 .setPositiveButton("确定", null)
                 .show();
     }
