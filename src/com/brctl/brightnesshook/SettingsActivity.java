@@ -2,11 +2,13 @@ package com.brctl.brightnesshook;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -194,6 +196,7 @@ public class SettingsActivity extends Activity {
     }
 
     private void refreshAll() {
+        clearFocusAndKeyboard();
         for (int i = 0; i < PARAMS.length; i++) {
             fields[i].setText(getProp(PARAMS[i][0]));
         }
@@ -201,6 +204,7 @@ public class SettingsActivity extends Activity {
     }
 
     private void saveAll() {
+        clearFocusAndKeyboard();
         StringBuilder cmd = new StringBuilder();
         for (int i = 0; i < PARAMS.length; i++) {
             String val = fields[i].getText().toString().trim();
@@ -238,6 +242,7 @@ public class SettingsActivity extends Activity {
     }
 
     private void restoreDefaults() {
+        clearFocusAndKeyboard();
         StringBuilder cmd = new StringBuilder();
         for (int i = 0; i < DEFAULTS.length; i++) {
             cmd.append("setprop persist.brctl.").append(DEFAULTS[i][0])
@@ -254,6 +259,17 @@ public class SettingsActivity extends Activity {
             }
         } catch (Throwable t) {
             toast("恢复失败: " + t.getMessage());
+        }
+    }
+
+    private void clearFocusAndKeyboard() {
+        View current = getCurrentFocus();
+        if (current != null) {
+            current.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(current.getWindowToken(), 0);
+            }
         }
     }
 
