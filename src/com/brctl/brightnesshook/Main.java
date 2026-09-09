@@ -131,44 +131,6 @@ public class Main implements IXposedHookLoadPackage {
                     });
             XposedBridge.log(TAG + ": hooked handleLightSensorEvent (lux input) OK");
 
-            // ===== Hook 2：拦截亮度输出（分段倍率） =====
-            final Class<?> brightnessEventClass = XposedHelpers.findClass(
-                    "com.android.server.display.brightness.BrightnessEvent", cl);
-            XposedHelpers.findAndHookMethod(cls, cl, "getAutomaticScreenBrightness",
-                    brightnessEventClass, new XC_MethodHook() {
-                        @Override
-                        public void afterHookedMethod(MethodHookParam param) {
-                            Object result = param.getResult();
-                            if (!(result instanceof Float)) {
-                                return;
-                            }
-                            float b = ((Float) result).floatValue();
-                            float percent = b * 100f;
-                            float lowMax = getPropFloat("persist.brctl.low_max", 30f);
-                            float midMax = getPropFloat("persist.brctl.mid_max", 60f);
-                            float lowInc = getPropFloat("persist.brctl.low_inc", 1.0f);
-                            float midInc = getPropFloat("persist.brctl.mid_inc", 1.0f);
-                            float higInc = getPropFloat("persist.brctl.hig_inc", 1.0f);
-                            float mult;
-                            if (percent < lowMax) {
-                                mult = lowInc;
-                            } else if (percent < midMax) {
-                                mult = midInc;
-                            } else {
-                                mult = higInc;
-                            }
-                            float nb = b * mult;
-                            if (nb > 1.0f) {
-                                nb = 1.0f;
-                            }
-                            if (nb < 0.0f) {
-                                nb = 0.0f;
-                            }
-                            param.setResult(Float.valueOf(nb));
-                        }
-                    });
-            XposedBridge.log(TAG + ": hooked getAutomaticScreenBrightness (output) OK");
-
             // ===== Hook 3：修改防抖时间 =====
             final Class<?> abcClass = XposedHelpers.findClass(cls, cl);
             XposedBridge.hookAllConstructors(abcClass, new XC_MethodHook() {
