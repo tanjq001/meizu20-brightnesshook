@@ -1,6 +1,7 @@
 package com.brctl.brightnesshook;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -96,8 +97,34 @@ public class SettingsActivity extends Activity {
         btns.addView(refresh, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
         layout.addView(btns);
+
+        Button about = new Button(this);
+        about.setText("关于");
+        about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAbout();
+            }
+        });
+        LinearLayout.LayoutParams aboutLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        aboutLp.setMargins(0, dp(8), 0, 0);
+        layout.addView(about, aboutLp);
+
         scroll.addView(layout);
         setContentView(scroll);
+    }
+
+    private void showAbout() {
+        new AlertDialog.Builder(this)
+                .setTitle("关于")
+                .setMessage("亮度曲线调节 v1.1\n\n"
+                        + "基于 LSPosed 的自动亮度调节模块\n"
+                        + "光感拦截 · 中值滤波 · 分段倍率 · 防抖调节\n\n"
+                        + "作者：酷安 折翼之舞007")
+                .setPositiveButton("确定", null)
+                .show();
     }
 
     private int dp(int v) {
