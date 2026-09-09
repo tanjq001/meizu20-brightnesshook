@@ -23,8 +23,8 @@ public class SettingsActivity extends Activity {
     // 参数定义：{属性名, 显示标签}
     private static final String[][] PARAMS = {
         {"lux_inc", "光感倍率 (lux_inc)｜>1更亮，1=不变"},
-        {"smooth_delay", "光感延迟 (smooth_delay)｜建议设1000~5000，0=不延迟"},
-        {"smooth_window", "滤波窗口 (smooth_window)｜毫秒，0=关闭滤波"},
+        {"smooth_delay", "光感延迟 (smooth_delay)｜毫秒"},
+        {"smooth_window", "滤波窗口 (smooth_window)｜毫秒"},
         {"filter_mode", "滤波方式 (filter_mode)｜median / mean"},
         {"brighten_debounce", "变亮防抖 (brighten_debounce)｜毫秒"},
         {"darken_debounce", "变暗防抖 (darken_debounce)｜毫秒"},
