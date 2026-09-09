@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- 背景圆 -->
-    <path
-        android:fillColor="#F57C00"
-        android:pathData="M54,54m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
-    <!-- 8 条光线 -->
-    <path android:fillColor="#FFE0B2" android:pathData="M54,12 L57,33 L51,33 Z" />
-    <path android:fillColor="#FFE0B2" android:pathData="M54,75 L57,96 L51,96 Z" />
-    <path android:fillColor="#FFE0B2" android:pathData="M12,54 L33,51 L33,57 Z" />
-    <path android:fillColor="#FFE0B2" android:pathData="M75,54 L96,51 L96,57 Z" />
-    <path android:fillColor="#FFE0B2" android:pathData="M24,24 L39,39 L35,43 Z" />
-    <path android:fillColor="#FFE0B2" android:pathData="M69,69 L84,84 L80,88 Z" />
-    <path android:fillColor="#FFE0B2" android:pathData="M84,24 L69,39 L65,35 Z" />
-    <path android:fillColor="#FFE0B2" android:pathData="M24,84 L39,69 L43,73 Z" />
+    <!-- 圆角矩形背景：Flyme 蓝渐变 -->
+    <path android:pathData="M24,0 L84,0 A24,24 0 0 1 108,24 L108,84 A24,24 0 0 1 84,108 L24,108 A24,24 0 0 1 0,84 L0,24 A24,24 0 0 1 24,0 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108"
+                android:startColor="#1687FB"
+                android:endColor="#00B4D8" />
+        </aapt:attr>
+    </path>
+    <!-- 8 条太阳光线（白色） -->
+    <path android:fillColor="#E3F2FD" android:pathData="M54,16 L58,36 L50,36 Z" />
+    <path android:fillColor="#E3F2FD" android:pathData="M54,72 L58,92 L50,92 Z" />
+    <path android:fillColor="#E3F2FD" android:pathData="M16,54 L36,50 L36,58 Z" />
+    <path android:fillColor="#E3F2FD" android:pathData="M72,54 L92,50 L92,58 Z" />
+    <path android:fillColor="#E3F2FD" android:pathData="M26,26 L40,40 L35,45 Z" />
+    <path android:fillColor="#E3F2FD" android:pathData="M82,26 L68,40 L63,35 Z" />
+    <path android:fillColor="#E3F2FD" android:pathData="M26,82 L40,68 L45,73 Z" />
+    <path android:fillColor="#E3F2FD" android:pathData="M82,82 L68,68 L63,73 Z" />
     <!-- 中心太阳 -->
     <path
-        android:fillColor="#FFC107"
-        android:pathData="M54,54m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,54m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0" />
 </vector>
