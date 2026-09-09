@@ -2,6 +2,7 @@ package com.brctl.brightnesshook;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -28,6 +29,21 @@ public class SettingsActivity extends Activity {
         {"hig_inc", "高亮度倍率"},
         {"brighten_debounce", "变亮防抖（毫秒）"},
         {"darken_debounce", "变暗防抖（毫秒）"},
+    };
+
+    // 默认值：{属性名, 默认值}
+    private static final String[][] DEFAULTS = {
+        {"lux_inc", "1.0"},
+        {"smooth_delay", "2000"},
+        {"smooth_window", "1000"},
+        {"filter_mode", "median"},
+        {"low_max", "30"},
+        {"mid_max", "60"},
+        {"low_inc", "1.0"},
+        {"mid_inc", "1.0"},
+        {"hig_inc", "1.0"},
+        {"brighten_debounce", "1000"},
+        {"darken_debounce", "4000"},
     };
 
     private EditText[] fields;
@@ -98,6 +114,23 @@ public class SettingsActivity extends Activity {
 
         layout.addView(btns);
 
+        LinearLayout row2 = new LinearLayout(this);
+        row2.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams row2Lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        row2Lp.setMargins(0, dp(8), 0, 0);
+
+        Button restore = new Button(this);
+        restore.setText("恢复默认");
+        restore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirmRestore();
+            }
+        });
+        row2.addView(restore, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
         Button about = new Button(this);
         about.setText("关于");
         about.setOnClickListener(new View.OnClickListener() {
@@ -106,11 +139,9 @@ public class SettingsActivity extends Activity {
                 showAbout();
             }
         });
-        LinearLayout.LayoutParams aboutLp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        aboutLp.setMargins(0, dp(8), 0, 0);
-        layout.addView(about, aboutLp);
+        row2.addView(about, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+
+        layout.addView(row2, row2Lp);
 
         scroll.addView(layout);
         setContentView(scroll);
@@ -122,8 +153,7 @@ public class SettingsActivity extends Activity {
                 .setMessage("亮度曲线调节 v1.1\n\n"
                         + "基于 LSPosed 的自动亮度调节模块\n"
                         + "光感拦截 · 中值滤波 · 分段倍率 · 防抖调节\n\n"
-                        + "机型：魅族 20\n"
-                        + "适用系统：Flyme 10.5.0.0.0\n\n"
+                        + "机型：魅族 20\n\n"
                         + "在 Flyme 10.5.0.0.0 上开发\n"
                         + "其它版本系统未验证\n\n"
                         + "作者：酷安 折翼之舞007")
@@ -173,6 +203,40 @@ public class SettingsActivity extends Activity {
             }
         } catch (Throwable t) {
             toast("保存失败: " + t.getMessage());
+        }
+    }
+
+    private void confirmRestore() {
+        new AlertDialog.Builder(this)
+                .setTitle("恢复默认")
+                .setMessage("确定恢复所有参数为默认值？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int w) {
+                        restoreDefaults();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void restoreDefaults() {
+        StringBuilder cmd = new StringBuilder();
+        for (int i = 0; i < DEFAULTS.length; i++) {
+            cmd.append("setprop persist.brctl.").append(DEFAULTS[i][0])
+                    .append(" ").append(DEFAULTS[i][1]).append("; ");
+        }
+        try {
+            Process p = Runtime.getRuntime().exec(new String[]{"su", "-c", cmd.toString()});
+            int code = p.waitFor();
+            if (code == 0) {
+                refreshAll();
+                toast("已恢复默认配置");
+            } else {
+                toast("恢复失败，请确认已授予 root 权限");
+            }
+        } catch (Throwable t) {
+            toast("恢复失败: " + t.getMessage());
         }
     }
 
