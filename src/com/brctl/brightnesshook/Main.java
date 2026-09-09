@@ -65,7 +65,7 @@ public class Main implements IXposedHookLoadPackage {
         float delayMs = getPropFloat("persist.brctl.smooth_delay", 2000f);
         float windowMs = getPropFloat("persist.brctl.smooth_window", 1000f);
         String mode = getProp("persist.brctl.filter_mode", "median");
-        if (delayMs <= 0f || windowMs <= 0f) {
+        if (windowMs <= 0f) {
             return lux;
         }
         long delay = (long) delayMs;

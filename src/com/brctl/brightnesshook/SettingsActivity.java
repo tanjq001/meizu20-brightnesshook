@@ -23,8 +23,8 @@ public class SettingsActivity extends Activity {
     // 参数定义：{属性名, 显示标签}
     private static final String[][] PARAMS = {
         {"lux_inc", "光感倍率 (lux_inc)｜>1更亮，1=不变"},
-        {"smooth_delay", "光感延迟 (smooth_delay)｜建议设2000~5000，0=关闭"},
-        {"smooth_window", "滤波窗口 (smooth_window)｜毫秒"},
+        {"smooth_delay", "光感延迟 (smooth_delay)｜建议设2000~5000，0=不延迟"},
+        {"smooth_window", "滤波窗口 (smooth_window)｜毫秒，0=关闭滤波"},
         {"filter_mode", "滤波方式 (filter_mode)｜median / mean"},
         {"brighten_debounce", "变亮防抖 (brighten_debounce)｜毫秒"},
         {"darken_debounce", "变暗防抖 (darken_debounce)｜毫秒"},
@@ -227,9 +227,9 @@ public class SettingsActivity extends Activity {
         sb.append("光感倍率 (lux_inc)\n");
         sb.append("  光感读数倍率，>1 更亮，<1 更暗，1=不变，默认 1.3\n\n");
         sb.append("光感延迟 (smooth_delay)\n");
-        sb.append("  光感延迟输出毫秒数。建议设 2000~5000，0=关闭，默认 2000\n\n");
+        sb.append("  光感延迟输出毫秒数。建议设 2000~5000，0=不延迟（仍滤波），默认 2000\n\n");
         sb.append("滤波窗口 (smooth_window)\n");
-        sb.append("  中值/均值滤波时间窗毫秒数，默认 1000\n\n");
+        sb.append("  中值/均值滤波时间窗毫秒数，0=关闭滤波，默认 1000\n\n");
         sb.append("滤波方式 (filter_mode)\n");
         sb.append("  median=中值(抗脉冲噪声) / mean=均值，默认 median\n\n");
         sb.append("变亮防抖 (brighten_debounce)\n");
