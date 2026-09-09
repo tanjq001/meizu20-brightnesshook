@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Flyme-inspired blue pin body -->
+    <path
+        android:fillColor="#1E7FE8"
+        android:pathData="M54,8
+                          C31,8 14,24.5 14,45.5
+                          C14,65 27.5,78 42.5,87.5
+                          L54,95
+                          L65.5,87.5
+                          C80.5,78 94,65 94,45.5
+                          C94,24.5 77,8 54,8 Z"/>
+
+    <!-- Gloss highlight -->
+    <path
+        android:pathData="M28,34
+                          C31.5,25.5 38,20.5 46,18"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeAlpha="0.92"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"/>
+
+    <!-- Brightness rays -->
+    <path
+        android:pathData="M54,28 L54,34"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M70.5,35.5 L66.2,39.8"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M77,52 L71,52"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M70.5,68.5 L66.2,64.2"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M54,76 L54,70"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M37.5,68.5 L41.8,64.2"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M31,52 L37,52"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:pathData="M37.5,35.5 L41.8,39.8"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round"/>
+
+    <!-- Brightness dial -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,40
+                          A12,12 0,1 0,54,64
+                          A12,12 0,1 0,54,40 Z"/>
+
+    <!-- Half-filled brightness indicator -->
+    <path
+        android:fillColor="#72B4F4"
+        android:pathData="M54,42
+                          A10,10 0,0 1,54,62
+                          Z"/>
+
+    <!-- White center ring -->
+    <path
+        android:pathData="M54,40
+                          A12,12 0,1 0,54,64
+                          A12,12 0,1 0,54,40 Z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"/>
+</vector>
