@@ -157,6 +157,18 @@ public class SettingsActivity extends Activity {
         sb.append("其它版本系统未验证\n\n");
         sb.append("作者：酷安 折翼之舞007\n\n");
         sb.append("──────────────\n");
+        sb.append("【调节指南】\n\n");
+        sb.append("屏幕过暗\n");
+        sb.append("  增大 lux_inc（如 1.3→1.8）或增大 low_inc\n\n");
+        sb.append("屏幕过亮\n");
+        sb.append("  减小 lux_inc（如 1.3→1.0）\n\n");
+        sb.append("响应慢、不灵敏\n");
+        sb.append("  减小 brighten_debounce / darken_debounce\n\n");
+        sb.append("明暗跳跃、忽明忽暗\n");
+        sb.append("  增大 smooth_delay，滤波方式用 median\n\n");
+        sb.append("暗处太暗、亮处合适\n");
+        sb.append("  只增大 low_inc，不动 lux_inc\n\n");
+        sb.append("──────────────\n");
         sb.append("【参数说明】\n\n");
         sb.append("光感倍率 (lux_inc)\n");
         sb.append("  光感读数倍率，>1 更亮，<1 更暗，1=不变，默认 1.3\n\n");
