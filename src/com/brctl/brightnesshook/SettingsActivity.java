@@ -33,7 +33,7 @@ public class SettingsActivity extends Activity {
 
     // 默认值：{属性名, 默认值}
     private static final String[][] DEFAULTS = {
-        {"lux_inc", "1.0"},
+        {"lux_inc", "1.3"},
         {"smooth_delay", "2000"},
         {"smooth_window", "1000"},
         {"filter_mode", "median"},

@@ -64,7 +64,7 @@ hook 所有构造函数，反射修改：
 
 | 属性 | 默认值 | 说明 |
 |------|--------|------|
-| `persist.brctl.lux_inc` | 1.0 | 光感倍率，>1 更亮，<1 更暗 |
+| `persist.brctl.lux_inc` | 1.3 | 光感倍率，>1 更亮，<1 更暗 |
 | `persist.brctl.smooth_delay` | 2000 | 光感延迟输出（毫秒），0 关闭 |
 | `persist.brctl.smooth_window` | 1000 | 滤波时间窗（毫秒） |
 | `persist.brctl.filter_mode` | median | 滤波方式：median 中值 / mean 均值 |

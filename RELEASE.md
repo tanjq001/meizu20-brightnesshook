@@ -44,7 +44,7 @@ su -c 'setprop persist.brctl.darken_debounce 1500'
 
 | 参数 | 默认 | 说明 |
 |---|---|---|
-| `lux_inc` | 1.0 | 光感倍率，>1 更亮 |
+| `lux_inc` | 1.3 | 光感倍率，>1 更亮 |
 | `smooth_delay` | 2000 | 光感延迟输出（毫秒） |
 | `smooth_window` | 1000 | 滤波时间窗（毫秒） |
 | `filter_mode` | median | 滤波方式：median 中值 / mean 均值 |

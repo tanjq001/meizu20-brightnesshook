@@ -118,7 +118,7 @@ public class Main implements IXposedHookLoadPackage {
                             }
                             long now = ((Long) args[0]).longValue();
                             float lux = ((Float) args[1]).floatValue();
-                            float luxInc = getPropFloat("persist.brctl.lux_inc", 1.0f);
+                            float luxInc = getPropFloat("persist.brctl.lux_inc", 1.3f);
                             float newLux = lux * luxInc;
                             newLux = smoothAndDelay(now, newLux);
                             if (luxLogCount < 50) {
