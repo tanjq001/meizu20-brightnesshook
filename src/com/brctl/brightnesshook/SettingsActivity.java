@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
@@ -39,6 +41,9 @@ public class SettingsActivity extends Activity {
     };
 
     private EditText[] fields;
+    private TextView luxView;
+    private Handler handler;
+    private Runnable poller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,14 @@ public class SettingsActivity extends Activity {
         hint.setGravity(Gravity.CENTER);
         hint.setPadding(0, 0, 0, dp(12));
         layout.addView(hint);
+
+        luxView = new TextView(this);
+        luxView.setText("当前光感：等待传感器数据...");
+        luxView.setTextSize(15);
+        luxView.setGravity(Gravity.CENTER);
+        luxView.setTypeface(android.graphics.Typeface.MONOSPACE);
+        luxView.setPadding(0, 0, 0, dp(12));
+        layout.addView(luxView);
 
         fields = new EditText[PARAMS.length];
         for (int i = 0; i < PARAMS.length; i++) {
@@ -137,6 +150,56 @@ public class SettingsActivity extends Activity {
 
         scroll.addView(layout);
         setContentView(scroll);
+
+        handler = new Handler(Looper.getMainLooper());
+        startLuxPolling();
+    }
+
+    private void startLuxPolling() {
+        poller = new Runnable() {
+            @Override
+            public void run() {
+                String raw = getSystemProp("sys.brctl.raw_lux");
+                String cur = getSystemProp("sys.brctl.cur_lux");
+                if (raw.isEmpty() && cur.isEmpty()) {
+                    luxView.setText("当前光感：等待传感器数据...");
+                } else {
+                    luxView.setText("原始光感 " + formatLux(raw) + " lux  →  计算后 " + formatLux(cur) + " lux");
+                }
+                handler.postDelayed(this, 500);
+            }
+        };
+        handler.post(poller);
+    }
+
+    private String formatLux(String s) {
+        if (s == null || s.isEmpty()) {
+            return " --.- ";
+        }
+        try {
+            return String.format(java.util.Locale.US, "%6.1f", Float.parseFloat(s));
+        } catch (Throwable t) {
+            return " --.- ";
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (handler != null && poller != null) {
+            handler.removeCallbacks(poller);
+        }
+    }
+
+    private String getSystemProp(String fullKey) {
+        try {
+            Class<?> sp = Class.forName("android.os.SystemProperties");
+            Object v = sp.getMethod("get", String.class, String.class)
+                    .invoke(null, fullKey, "");
+            return v == null ? "" : v.toString();
+        } catch (Throwable t) {
+            return "";
+        }
     }
 
     private void showAbout() {

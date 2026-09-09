@@ -14,6 +14,7 @@ public class Main implements IXposedHookLoadPackage {
 
     private static final String TAG = "BrightnessHook";
     private static Method sysPropGet = null;
+    private static Method sysPropSet = null;
     private static int luxLogCount = 0;
 
     // 光感历史记录（用于平滑 + 延迟）
@@ -38,6 +39,18 @@ public class Main implements IXposedHookLoadPackage {
             return Float.parseFloat(getProp(key, String.valueOf(def)));
         } catch (Throwable t) {
             return def;
+        }
+    }
+
+    private static void setProp(String key, String value) {
+        try {
+            if (sysPropSet == null) {
+                Class<?> sp = Class.forName("android.os.SystemProperties");
+                sysPropSet = sp.getMethod("set", String.class, String.class);
+            }
+            sysPropSet.invoke(null, key, value);
+        } catch (Throwable t) {
+            // 忽略
         }
     }
 
@@ -121,6 +134,9 @@ public class Main implements IXposedHookLoadPackage {
                             float luxInc = getPropFloat("persist.brctl.lux_inc", 1.3f);
                             float newLux = lux * luxInc;
                             newLux = smoothAndDelay(now, newLux);
+                            // 实时暴露光感值给界面
+                            setProp("sys.brctl.raw_lux", String.valueOf(lux));
+                            setProp("sys.brctl.cur_lux", String.valueOf(newLux));
                             if (luxLogCount < 50) {
                                 luxLogCount++;
                                 XposedBridge.log(TAG + ": lux " + lux + " -> " + newLux
