@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.brctl.brightnesshook"
-    android:versionCode="1"
-    android:versionName="1.0">
+    android:versionCode="2"
+    android:versionName="1.1">
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
     <application
-        android:label="Brightness Curve Hook"
-        android:hasCode="true">
+        android:label="亮度曲线调节"
+        android:hasCode="true"
+        android:icon="@android:drawable/sym_def_app_icon">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Auto brightness curve hook (piecewise multiplier)" />
+            android:value="自动亮度曲线调节（光感拦截+中值滤波+分段倍率+防抖）" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
