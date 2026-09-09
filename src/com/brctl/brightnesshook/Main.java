@@ -8,6 +8,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Main implements IXposedHookLoadPackage {
 
@@ -41,15 +42,16 @@ public class Main implements IXposedHookLoadPackage {
     }
 
     /**
-     * 对光感读数做平滑（时间窗内平均）+ 延迟输出。
+     * 对光感读数做滤波（均值或中值）+ 延迟输出。
      *
      * @param now 当前事件时间戳（uptimeMillis）
      * @param lux 当前（已乘 lux_inc 的）光感值
-     * @return 平滑后、延迟 smoothDelay 毫秒的值
+     * @return 滤波后、延迟 smoothDelay 毫秒的值
      */
     private static synchronized float smoothAndDelay(long now, float lux) {
         float delayMs = getPropFloat("persist.brctl.smooth_delay", 2000f);
         float windowMs = getPropFloat("persist.brctl.smooth_window", 1000f);
+        String mode = getProp("persist.brctl.filter_mode", "median");
         if (delayMs <= 0f || windowMs <= 0f) {
             return lux;
         }
@@ -66,22 +68,33 @@ public class Main implements IXposedHookLoadPackage {
             sLuxValues.remove(0);
         }
 
-        // 取 [now - delay - window, now - delay] 窗口内的平均值
+        // 收集 [now - delay - window, now - delay] 窗口内的值
         long start = now - delay - window;
         long end = now - delay;
-        float sum = 0f;
-        int count = 0;
+        ArrayList<Float> vals = new ArrayList<Float>();
         for (int i = 0; i < sLuxTimes.size(); i++) {
             long t = sLuxTimes.get(i).longValue();
             if (t >= start && t <= end) {
-                sum += sLuxValues.get(i).floatValue();
-                count++;
+                vals.add(sLuxValues.get(i));
             }
         }
-        if (count == 0) {
+        if (vals.isEmpty()) {
             return lux; // 历史数据不足，直接返回当前值
         }
-        return sum / count;
+        if ("mean".equals(mode)) {
+            float sum = 0f;
+            for (int i = 0; i < vals.size(); i++) {
+                sum += vals.get(i).floatValue();
+            }
+            return sum / vals.size();
+        }
+        // 默认中值滤波
+        Collections.sort(vals);
+        int n = vals.size();
+        if (n % 2 == 1) {
+            return vals.get(n / 2).floatValue();
+        }
+        return (vals.get(n / 2 - 1).floatValue() + vals.get(n / 2).floatValue()) / 2f;
     }
 
     @Override

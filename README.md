@@ -1,5 +1,7 @@
 # Brightness Curve Hook
 
+> 作者：酷安 折翼之舞007
+
 基于 LSPosed/Xposed 的 Android 自动亮度调节模块，通过 hook 系统框架
 （`com.android.server.display.AutomaticBrightnessController`）实现对亮度曲线的精细化控制。
 
@@ -21,7 +23,7 @@ hook 目标类：`com.android.server.display.AutomaticBrightnessController`（sy
 
 ```
 光感传感器
-  → handleLightSensorEvent(long 时间戳, float lux)   ← Hook 1（输入：倍率/平滑/延迟）
+  → handleLightSensorEvent(long 时间戳, float lux)   ← Hook 1（输入：倍率/中值滤波/延迟）
   → 环形缓冲 + 短/长时窗滤波
   → 亮度曲线（lux → nits）
   → getAutomaticScreenBrightness(BrightnessEvent)     ← Hook 2（输出：分段倍率）
@@ -35,8 +37,8 @@ hook 目标类：`com.android.server.display.AutomaticBrightnessController`（sy
 拦截 `handleLightSensorEvent(long, float)`，在 lux 进入系统曲线**之前**修改：
 
 - **倍率**：`lux × lux_inc`
-- **平滑**：在 `smooth_window` 时间窗内取平均
-- **延迟**：输出 `smooth_delay` 毫秒之前的平滑值
+- **滤波**：在 `smooth_window` 时间窗内取中值（或均值，见 `filter_mode`）
+- **延迟**：输出 `smooth_delay` 毫秒之前的滤波值
 
 ### Hook 2：亮度输出拦截
 
@@ -64,7 +66,8 @@ hook 所有构造函数，反射修改：
 |------|--------|------|
 | `persist.brctl.lux_inc` | 1.0 | 光感倍率，>1 更亮，<1 更暗 |
 | `persist.brctl.smooth_delay` | 2000 | 光感延迟输出（毫秒），0 关闭 |
-| `persist.brctl.smooth_window` | 1000 | 平滑时间窗（毫秒） |
+| `persist.brctl.smooth_window` | 1000 | 滤波时间窗（毫秒） |
+| `persist.brctl.filter_mode` | median | 滤波方式：median 中值 / mean 均值 |
 | `persist.brctl.low_max` | 30 | 低亮度档上限（百分比 0~100） |
 | `persist.brctl.mid_max` | 60 | 中亮度档上限（百分比 0~100） |
 | `persist.brctl.low_inc` | 1.0 | 低亮度输出倍率 |
@@ -82,7 +85,7 @@ su -c 'getprop | grep persist.brctl'
 # 整体调亮（系统以为环境更亮）
 su -c 'setprop persist.brctl.lux_inc 1.5'
 
-# 平滑 + 延迟 2 秒输出（抑制明暗跳跃）
+# 中值滤波 + 延迟 2 秒输出（抑制明暗跳跃）
 su -c 'setprop persist.brctl.smooth_delay 2000'
 su -c 'setprop persist.brctl.smooth_window 1000'
 
