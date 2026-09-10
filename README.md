@@ -47,11 +47,6 @@ hook 所有构造函数，反射修改：
 | `persist.brctl.lux_min` | 0.5 | 光感最小值，低于按此值算（lux） |
 | `persist.brctl.smooth_window` | 6000 | 滤波时间窗（毫秒） |
 | `persist.brctl.filter_mode` | median | 滤波方式：median 中值 / mean 均值 |
-| `persist.brctl.low_max` | 30 | 低亮度档上限（百分比 0~100） |
-| `persist.brctl.mid_max` | 60 | 中亮度档上限（百分比 0~100） |
-| `persist.brctl.low_inc` | 1.0 | 低亮度输出倍率 |
-| `persist.brctl.mid_inc` | 1.0 | 中亮度输出倍率 |
-| `persist.brctl.hig_inc` | 1.0 | 高亮度输出倍率 |
 | `persist.brctl.brighten_debounce` | 3000 | 变亮防抖（毫秒） |
 | `persist.brctl.darken_debounce` | 3000 | 变暗防抖（毫秒） |
 
@@ -65,15 +60,11 @@ su -c 'getprop | grep persist.brctl'
 su -c 'setprop persist.brctl.lux_inc 1.5'
 
 # 中值滤波（抑制明暗跳跃）
-su -c 'setprop persist.brctl.lux_min 10'
-su -c 'setprop persist.brctl.smooth_window 1000'
+su -c 'setprop persist.brctl.smooth_window 6000'
 
 # 提高响应速度（缩短防抖）
 su -c 'setprop persist.brctl.brighten_debounce 500'
 su -c 'setprop persist.brctl.darken_debounce 1500'
-
-# 暗处额外增亮（输出分段倍率）
-su -c 'setprop persist.brctl.low_inc 1.3'
 ```
 
 ## 验证生效
