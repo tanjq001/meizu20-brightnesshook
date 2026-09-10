@@ -5,16 +5,6 @@
 基于 LSPosed/Xposed 的 Android 自动亮度调节模块，通过 hook 系统框架
 （`com.android.server.display.AutomaticBrightnessController`）实现对亮度曲线的精细化控制。
 
-## 背景
-
-原方案 `brctl` 是一个 Magisk/KernelSU 模块，通过轮询 sysfs 背光节点
-（`/sys/class/backlight/*/brightness`）在系统调整亮度后再做乘法修正。这种方式存在以下问题：
-
-- 轮询有延迟，且与系统自动亮度"打架"，容易闪屏
-- 修改的是亮度"输出"，系统曲线本身没有变化
-
-本项目改用 **LSPosed hook** 直接在框架层拦截，不碰 sysfs、不碰签名、无平台密钥限制。
-
 ## 工作原理
 
 hook 目标类：`com.android.server.display.AutomaticBrightnessController`（system_server 进程）。
@@ -23,34 +13,23 @@ hook 目标类：`com.android.server.display.AutomaticBrightnessController`（sy
 
 ```
 光感传感器
-  → handleLightSensorEvent(long 时间戳, float lux)   ← Hook 1（输入：倍率/中值滤波/延迟）
+  → handleLightSensorEvent(long 时间戳, float lux)   ← Hook 1（输入：倍率/最小值/中值滤波）
   → 环形缓冲 + 短/长时窗滤波
   → 亮度曲线（lux → nits）
-  → getAutomaticScreenBrightness(BrightnessEvent)     ← Hook 2（输出：分段倍率）
   → 屏幕背光
 ```
 
-防抖时间在构造函数中初始化，通过反射修改（Hook 3）。
+防抖时间在构造函数中初始化，通过反射修改（Hook 2）。
 
 ### Hook 1：光感输入拦截
 
 拦截 `handleLightSensorEvent(long, float)`，在 lux 进入系统曲线**之前**修改：
 
 - **倍率**：`lux × lux_inc`
+- **最小值**：×倍率后低于 `lux_min` 时按 `lux_min` 算
 - **滤波**：在 `smooth_window` 时间窗内取中值（或均值，见 `filter_mode`）
-- **最小值**：光感低于 `lux_min` 时按 `lux_min` 算
 
-### Hook 2：亮度输出拦截
-
-拦截 `getAutomaticScreenBrightness(BrightnessEvent)`，对系统算出的亮度值（0~1 归一化）做分段倍率：
-
-```
-percent < low_max  → × low_inc
-low_max ≤ percent < mid_max → × mid_inc
-percent ≥ mid_max  → × hig_inc
-```
-
-### Hook 3：防抖时间修改
+### Hook 2：防抖时间修改
 
 hook 所有构造函数，反射修改：
 
