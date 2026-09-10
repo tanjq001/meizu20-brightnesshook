@@ -45,13 +45,13 @@ su -c 'setprop persist.brctl.darken_debounce 1500'
 | 参数 | 默认 | 说明 |
 |---|---|---|
 | `lux_inc` | 1.3 | 光感倍率，>1 更亮 |
-| `lux_min` | 0 | 光感最小值（lux） |
-| `smooth_window` | 4000 | 滤波时间窗（毫秒） |
+| `lux_min` | 0.5 | 光感最小值（lux） |
+| `smooth_window` | 6000 | 滤波时间窗（毫秒） |
 | `filter_mode` | median | 滤波方式：median 中值 / mean 均值 |
 | `low_inc` / `mid_inc` / `hig_inc` | 1.0 | 低/中/高亮度倍率 |
 | `low_max` / `mid_max` | 30 / 60 | 亮度档位边界（%） |
-| `brighten_debounce` | 1000 | 变亮防抖（毫秒） |
-| `darken_debounce` | 2000 | 变暗防抖（毫秒） |
+| `brighten_debounce` | 3000 | 变亮防抖（毫秒） |
+| `darken_debounce` | 3000 | 变暗防抖（毫秒） |
 
 完整说明见模块仓库 README。
 

@@ -33,11 +33,11 @@ public class SettingsActivity extends Activity {
     // 默认值：{属性名, 默认值}
     private static final String[][] DEFAULTS = {
         {"lux_inc", "1.3"},
-        {"lux_min", "0"},
-        {"smooth_window", "4000"},
+        {"lux_min", "0.5"},
+        {"smooth_window", "6000"},
         {"filter_mode", "median"},
-        {"brighten_debounce", "1000"},
-        {"darken_debounce", "2000"},
+        {"brighten_debounce", "3000"},
+        {"darken_debounce", "3000"},
     };
 
     private EditText[] fields;
@@ -227,15 +227,15 @@ public class SettingsActivity extends Activity {
         sb.append("光感倍率 (lux_inc)\n");
         sb.append("  光感读数倍率，>1 更亮，<1 更暗，1=不变，默认 1.3\n\n");
         sb.append("光感最小值 (lux_min)\n");
-        sb.append("  ×倍率后的光感值低于此值时按此值算，0=不限制，默认 0\n\n");
+        sb.append("  ×倍率后的光感值低于此值时按此值算，0=不限制，默认 0.5\n\n");
         sb.append("滤波窗口 (smooth_window)\n");
-        sb.append("  中值/均值滤波时间窗毫秒数，0=关闭，上限 60000，默认 4000\n\n");
+        sb.append("  中值/均值滤波时间窗毫秒数，0=关闭，上限 60000，默认 6000\n\n");
         sb.append("滤波方式 (filter_mode)\n");
         sb.append("  median=中值(抗脉冲噪声) / mean=均值，默认 median\n\n");
         sb.append("变亮防抖 (brighten_debounce)\n");
-        sb.append("  变亮防抖毫秒数，默认 1000\n\n");
+        sb.append("  变亮防抖毫秒数，默认 3000\n\n");
         sb.append("变暗防抖 (darken_debounce)\n");
-        sb.append("  变暗防抖毫秒数，默认 2000");
+        sb.append("  变暗防抖毫秒数，默认 3000");
         new AlertDialog.Builder(this)
                 .setTitle("关于")
                 .setMessage(sb.toString())

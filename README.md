@@ -65,16 +65,16 @@ hook 所有构造函数，反射修改：
 | 属性 | 默认值 | 说明 |
 |------|--------|------|
 | `persist.brctl.lux_inc` | 1.3 | 光感倍率，>1 更亮，<1 更暗 |
-| `persist.brctl.lux_min` | 0 | 光感最小值，低于按此值算（lux） |
-| `persist.brctl.smooth_window` | 4000 | 滤波时间窗（毫秒） |
+| `persist.brctl.lux_min` | 0.5 | 光感最小值，低于按此值算（lux） |
+| `persist.brctl.smooth_window` | 6000 | 滤波时间窗（毫秒） |
 | `persist.brctl.filter_mode` | median | 滤波方式：median 中值 / mean 均值 |
 | `persist.brctl.low_max` | 30 | 低亮度档上限（百分比 0~100） |
 | `persist.brctl.mid_max` | 60 | 中亮度档上限（百分比 0~100） |
 | `persist.brctl.low_inc` | 1.0 | 低亮度输出倍率 |
 | `persist.brctl.mid_inc` | 1.0 | 中亮度输出倍率 |
 | `persist.brctl.hig_inc` | 1.0 | 高亮度输出倍率 |
-| `persist.brctl.brighten_debounce` | 1000 | 变亮防抖（毫秒） |
-| `persist.brctl.darken_debounce` | 2000 | 变暗防抖（毫秒） |
+| `persist.brctl.brighten_debounce` | 3000 | 变亮防抖（毫秒） |
+| `persist.brctl.darken_debounce` | 3000 | 变暗防抖（毫秒） |
 
 ### 示例
 

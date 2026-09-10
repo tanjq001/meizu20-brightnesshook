@@ -72,7 +72,7 @@ public class Main implements IXposedHookLoadPackage {
      * @return 滤波后的值
      */
     private static synchronized float filterLux(long now, float lux) {
-        float windowMs = clamp(getPropFloat("persist.brctl.smooth_window", 4000f), 0f, 60000f);
+        float windowMs = clamp(getPropFloat("persist.brctl.smooth_window", 6000f), 0f, 60000f);
         String mode = getProp("persist.brctl.filter_mode", "median");
         if (windowMs <= 0f) {
             return lux;
@@ -141,7 +141,7 @@ public class Main implements IXposedHookLoadPackage {
                             float rawLux = ((Float) args[1]).floatValue();
                             float luxInc = getPropFloat("persist.brctl.lux_inc", 1.3f);
                             float newLux = rawLux * luxInc;
-                            float luxMin = getPropFloat("persist.brctl.lux_min", 0f);
+                            float luxMin = getPropFloat("persist.brctl.lux_min", 0.5f);
                             if (newLux < luxMin) {
                                 newLux = luxMin; // 光感最小值：乘倍率后低于该值按该值算
                             }
@@ -165,8 +165,8 @@ public class Main implements IXposedHookLoadPackage {
                 @Override
                 public void afterHookedMethod(MethodHookParam param) {
                     try {
-                        long brighten = (long) getPropFloat("persist.brctl.brighten_debounce", 1000f);
-                        long darken = (long) getPropFloat("persist.brctl.darken_debounce", 2000f);
+                        long brighten = (long) getPropFloat("persist.brctl.brighten_debounce", 3000f);
+                        long darken = (long) getPropFloat("persist.brctl.darken_debounce", 3000f);
                         XposedHelpers.setLongField(param.thisObject, "mBrighteningLightDebounceConfig", brighten);
                         XposedHelpers.setLongField(param.thisObject, "mDarkeningLightDebounceConfig", darken);
                         XposedBridge.log(TAG + ": debounce set brighten=" + brighten + " darken=" + darken);
